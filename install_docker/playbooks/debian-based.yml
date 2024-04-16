@@ -36,7 +36,7 @@
         group: root
     - name: Add docker repo url
       apt_repository:
-        repo: deb [arch={{ [ansible_architecture] | map('extract', architectures) | first }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+        repo: deb [arch={{ [ansible_architecture] | map('extract', architectures) | first }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
         filename: docker
         state: present
 
