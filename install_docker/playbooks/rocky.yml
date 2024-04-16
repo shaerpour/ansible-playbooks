@@ -1,0 +1,42 @@
+- name: STEP-1 (REMOVE INSTALLED DOCKER)
+  dnf:
+    name: "{{ item }}"
+    state: absent
+  loop:
+    - docker.io
+    - docker-compose
+    - docker-doc
+    - podman-docker
+    - docker-engine
+    - docker-client
+    - docker-client-latest
+    - docker-common
+    - docker-latest
+    - docker-latest-logrotate
+
+- name: STEP-2 (INSTALL DOCKER DEPENDENCIES)
+  dnf:
+    name: yum-utils
+    state: latest
+
+- name: STEP-3 (ADD DOCKER REPOSITORY)
+  block:
+    - name: Add Rocky repository
+      yum_repository:
+        name: docker
+        base_url: https://download.docker.com/linux/centos/docker-ce.repo
+    - name: update repo
+      shell: yum update -y
+
+- name: install docker
+  dnf:
+    name: "{{ item }}"
+    state: latest
+  loop: 
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    - docker-buildx-plugin
+    - docker-compose-plugin
+  when: ansible_os_family == "Rocky"
+

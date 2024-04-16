@@ -1,0 +1,26 @@
+- name: Install docker
+  hosts: all
+  become: true
+  handlers:
+    - import_tasks: handlers/main.yml
+  vars:
+    architectures:
+      "aarch64": "arm64"
+      "x86_64": "amd64"
+  tasks:
+    #- name: Setup DNS on remote server
+    #  copy:
+    #    content: |
+    #      nameserver 10.202.10.202
+    #      nameserver 10.202.10.102
+    #    dest: /etc/resolv.conf
+    #    force: yes
+
+    - name: Import deb based playbook
+      include_tasks: playbooks/debian-based.yml
+      when: ansible_os_family in ["Ubuntu", "Debian"]
+
+    - name: Import rpm playbook
+      include_tasks: playbooks/rocky.yml
+      when: ansible_os_family == "Rocky"
+

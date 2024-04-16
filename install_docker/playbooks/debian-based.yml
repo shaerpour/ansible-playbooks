@@ -1,0 +1,55 @@
+- name: STEP-1 (Remove docker if installed)
+  apt: 
+    pkg:
+      - docker.io
+      - docker-compose
+      - docker-compose-v2
+      - docker-doc
+      - podman-docker
+      - containerd
+      - runc
+    state: absent
+    force: true
+
+- name: STEP-2 (Install dependencies)
+  apt:
+    pkg:
+      - ca-certificates
+      - curl
+      - gnupg
+    state: present
+    update_cache: true
+
+- name: STEP-3 (Add docker repository)
+  block:
+    - name: Ensure /etc/apt/keyrings directory exists
+      file:
+        name: /etc/apt/keyrings/
+        state: directory
+        mode: "755"
+    - name: Get docker repo gpg key
+      get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: "644"
+        owner: root
+        group: root
+    - name: Add docker repo url
+      apt_repository:
+        repo: deb [arch={{ [ansible_architecture] | map('extract', architectures) | first }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+        filename: docker
+        state: present
+
+
+- name: STEP-4 (Install latest docker version)
+  apt:  
+    pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+  notify:
+    - Start and enable docker service
+

@@ -1,0 +1,6 @@
+all:
+  hosts:
+    server-01:
+      ansible_host: ""
+      ansible_user: ""
+
