@@ -21,6 +21,6 @@
       when: ansible_os_family in ["Ubuntu", "Debian"]
 
     - name: Import rpm playbook
-      include_tasks: playbooks/rocky.yml
-      when: ansible_os_family == "Rocky"
+      include_tasks: playbooks/rpm-based.yml
+      when: ansible_os_family in ["Rocky", "CentOS"]
 
